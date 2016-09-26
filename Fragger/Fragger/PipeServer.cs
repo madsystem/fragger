@@ -21,7 +21,7 @@ namespace Fragger
                 while (true)
                 {
                     var line = reader.ReadLine();
-                    writer.WriteLine(String.Join("", line.Reverse()));
+                    //writer.WriteLine(String.Join("", line.Reverse()));
                     writer.Flush();
                 }
             });

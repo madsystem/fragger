@@ -30,7 +30,7 @@ namespace Fragger
         {
             Process[] localProcesses = Process.GetProcessesByName("notepad");
             PipeServer.Start();
-            Injector.Inject("blub", localProcesses[0]);
+            Injector.Inject("notepad++", "J:\\Fragger\\Fragger\\Debug\\FraggerProbe.dll");
 
         }
     }
