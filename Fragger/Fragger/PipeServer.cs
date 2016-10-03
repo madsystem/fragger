@@ -10,22 +10,45 @@ namespace Fragger
 {
     class PipeServer
     {
-        public static void Start()
+        public event EventHandler<PipeData> PipeDataReceived;
+        private string pipeName;
+
+        public PipeServer(string pipeName)
+        {
+            this.pipeName = pipeName;
+        }
+
+        public void Start()
         {
             var task = Task.Factory.StartNew(() =>
             {
-                var server = new NamedPipeServerStream("FRAGGER_PIPE");
+                var server = new NamedPipeServerStream(this.pipeName);
                 server.WaitForConnection();
                 StreamReader reader = new StreamReader(server);
                 StreamWriter writer = new StreamWriter(server);
                 while (true)
                 {
                     var line = reader.ReadLine();
-                    //writer.WriteLine(String.Join("", line.Reverse()));
+
+                    PipeData pipeData = new PipeData();
+                    pipeData.PipeDataStr = line;
+                    this.OnPipeDataReceived(pipeData);
+                    
                     writer.Flush();
                 }
             });
 
+        }
+
+        protected virtual void OnPipeDataReceived(PipeData e)
+        {
+            PipeDataReceived?.Invoke(this, e);
+        }
+
+        public class PipeData : EventArgs
+        {
+            public string PipeDataStr { get; set; }
+            
         }
     }
 }

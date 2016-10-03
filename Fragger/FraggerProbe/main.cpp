@@ -1,14 +1,21 @@
 #include <windows.h>
 #include <iostream>
+#include <vector>
 #include <sstream>
 
 bool running = true;
+// 1 kb
+// 500 kb
+// 1 mb
+// 10 mb
+// 100 mb
+std::vector<int> probeSizes = { 1024, 512000, 1048576, 10485760, 104857600, 1073741824};
 
 void DoFragCheck() 
 {
 	HANDLE hPipe = 0;
 	hPipe = CreateFile(
-		L"\\\\.\\pipe\\FRAGGER_PIPE",   // pipe name 
+		"\\\\.\\pipe\\FRAGGER_PIPE",   // pipe name 
 		GENERIC_READ |  // read and write access 
 		GENERIC_WRITE,
 		0,              // no sharing 
@@ -19,35 +26,45 @@ void DoFragCheck()
 
 	if (hPipe != INVALID_HANDLE_VALUE)
 	{
-		OutputDebugString(L"Connected to pipe");
+		OutputDebugString("Connected to pipe");
 
 		// send sample data
 		while (running)
 		{
 			Sleep(1000);
-			std::string data;
 
-			if (malloc(100000000)) // add some bytes... continue here
+			int succededAlloc = -1;
+			for (auto &allocSize : probeSizes)
 			{
-				OutputDebugString(L"OK");
-				data = "OK\n";
-			}
-			else
-			{
-				OutputDebugString(L"FAILED");
-				data = "FAILED\n";
+				OutputDebugString("Alloc");
+				void *allocResult = malloc(allocSize);
+				if (allocResult != nullptr)
+				{
+					free(allocResult);
+					succededAlloc = allocSize;
+				}
+				else
+				{
+					break;
+				}
 			}
 
-			DWORD dwBytesToWrite = data.length() + 1;
+			// convert int to str
+			std::stringstream intToStr;
+			intToStr << succededAlloc;
+			std::string data = intToStr.str() + "\n";
+
+			// write failed size to pipe
+			DWORD dwBytesToWrite = data.length();
 			DWORD dwBytesWritten = 0;
 			if (!WriteFile(hPipe, data.c_str(), dwBytesToWrite, &dwBytesWritten, NULL))
 			{
-				OutputDebugString(L"Sampling error...");
+				OutputDebugString("Sampling error...");
 			}
 			
 			if (dwBytesToWrite != dwBytesWritten)
 			{
-				OutputDebugString(L"Not everything written");
+				OutputDebugString("Not everything written");
 			}
 		}
 
@@ -55,7 +72,7 @@ void DoFragCheck()
 	}
 	else
 	{
-		OutputDebugString(L"Something went wrong with create file");
+		OutputDebugString("Something went wrong with create file");
 	}
 
 

@@ -5,11 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Fragger"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <Button Content="Start" Margin="10,269,289,10" Click="StartButton_Click" />
-        <Button Content="Stop" Margin="407,269,10,10" />
-
-
+        Title="Fragger" Height="244.919" Width="284.774">
+    <Grid Margin="0,0,0,0" Height="212" VerticalAlignment="Top">
+        <Button Content="Start" Click="StartButton_Click" Margin="10,159,10,10" />
+        <Label x:Name="processNameLabel" Content="Process Name:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="142"/>
+        <Label x:Name="dllLocationLabel" Content="DLL Location:" HorizontalAlignment="Left" Margin="152,10,0,0" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="processNameBox" HorizontalAlignment="Left" Height="23" Margin="10,36,0,0" TextWrapping="Wrap" Text="{Binding ProcessName}" VerticalAlignment="Top" Width="120" Grid.RowSpan="2"/>
+        <TextBox x:Name="dllLocationBox" Height="23" Margin="152,36,5,0" TextWrapping="Wrap" Text="{Binding DLLLocation}" VerticalAlignment="Top" Grid.RowSpan="2"/>
+        <Label x:Name="fragDescLabel" Content="Current Fragmentation (Bytes):" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="fragDataLabel" Content="{Binding CurrentFragmentation, Mode=TwoWay}" HorizontalAlignment="Left" Margin="12,95,0,0" VerticalAlignment="Top" Height="26" Width="255"/>
     </Grid>
 </Window>
